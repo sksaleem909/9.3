@@ -1,0 +1,34 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class DatabaseDeleteExample {
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/mydatabase";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "password";
+
+    public static void main(String[] args) {
+        String deleteQuery = "DELETE FROM users WHERE id = ?";
+
+        // Both the connection and the statement are safely initialized together
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
+             PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
+            
+            // Set the ID parameter for the record you want to delete
+            deleteStmt.setInt(1, 2); 
+            
+            int rowsAffected = deleteStmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                System.out.println("Row deleted successfully. Total rows removed: " + rowsAffected);
+            } else {
+                System.out.println("No rows were deleted (User ID might not exist).");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("A database error occurred during deletion:");
+            e.printStackTrace();
+        }
+    }
+}
